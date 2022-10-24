@@ -1,18 +1,21 @@
 import cv2
+from pypylon import pylon
 import numpy as np
 import skimage.io
 from block import clear_blocks, floodlight_blocks
 
 from constants import CAMERA_H, CAMERA_W, CAMERA_ID
 
-cap = None
+camera = None
+converter = None
 vid = None
 
 dark_image = np.zeros((CAMERA_H, CAMERA_W))
 
 
 def camera_init():
-    global cap
+    global camera
+    global converter
     global vid
     global dark_image
 
@@ -23,20 +26,34 @@ def camera_init():
         (CAMERA_W, CAMERA_H),
     )
 
-    cap = cv2.VideoCapture(CAMERA_ID)
+    # connecting to the first available camera
+    camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
+    # Grabbing Continuously (video) with minimal delay
+    camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+    converter = pylon.ImageFormatConverter()
+    # converting to opencv bgr format
+    converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+    converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
     clear_blocks()
     dark_image = camera_read_gray()
     floodlight_blocks()
 
 
 def camera_read():
-    global cap
+    global camera
     global vid
 
-    if cap is None:
+    if camera is None:
         raise Exception("Camera not initialized")
 
-    _, frame = cap.read()
+    if camera.IsGrabbing():
+        grabResult = camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+        if grabResult.GrabSucceeded():
+            # Access the image data
+            image = converter.Convert(grabResult)
+            frame = image.GetArray()
+        grabResult.Release()
 
     # Resize image
     frame = cv2.resize(frame, (CAMERA_W, CAMERA_H))
@@ -71,9 +88,9 @@ def camera_read_gray():
 
 
 def camera_close():
-    global cap
+    global camera
     global vid
 
-    cap.release()
+    camera.StopGrabbing()
     vid.release()
 
