@@ -81,8 +81,8 @@ def acquire_images(conflict_free_lists):
 
 def process_results(blocks_affected_by_each_pixel, conflict_free_lists, new_images):
     global blocks
-    global T_energies
-    global T_corresponding_block
+    # global T_energies
+    global T
 
     subdivided_at_least_one_block = False
 
@@ -146,7 +146,7 @@ def main():
 
     levels = {0: range(0, 1)}
 
-    for level in range(14):
+    for level in range(7):
         print(f"Capturing level {level}...")
 
         conflict_free_lists = construct_conflict_free_lists(
