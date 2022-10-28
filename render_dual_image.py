@@ -62,7 +62,7 @@ def main():
     # Save dual image
     dual_image = dual_image ** (1 / 3)
     dual_image = np.clip(dual_image, 0, 1)
-    skimage.io.imsave("ddual_image.jpg", dual_image)
+    skimage.io.imsave("dual_image.jpg", (dual_image*255).astype(np.uint8))
 
 
 if __name__ == "__main__":
