@@ -30,6 +30,8 @@ def camera_init():
     camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
     # Grabbing Continuously (video) with minimal delay
     camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+    camera.ExposureTimeRaw.SetValue(10000)
+    camera.GainRaw.SetValue(8)
     converter = pylon.ImageFormatConverter()
     # converting to opencv bgr format
     converter.OutputPixelFormat = pylon.PixelType_BGR8packed
@@ -48,7 +50,7 @@ def camera_read():
         raise Exception("Camera not initialized")
 
     if camera.IsGrabbing():
-        grabResult = camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+        grabResult = camera.RetrieveResult(10000, pylon.TimeoutHandling_ThrowException)
         if grabResult.GrabSucceeded():
             # Access the image data
             image = converter.Convert(grabResult)
