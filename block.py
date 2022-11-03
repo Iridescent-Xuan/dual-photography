@@ -83,7 +83,7 @@ def create_blocks_window():
     screen = screeninfo.get_monitors()[SCREEN_ID]
     cv2.namedWindow(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN)
     cv2.moveWindow(WINDOW_NAME, screen.x - 1, screen.y - 1)
-    # cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow(WINDOW_NAME, np.ones((PROJECTOR_H, PROJECTOR_W)))
     print(
         "Move window to projector and full-screen. Press any key on the window to continue."
@@ -106,6 +106,7 @@ def display_blocks(*blocks):
     for block in blocks:
         im[block.min_x : block.max_x, block.min_y : block.max_y] = 1
 
+    cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow(WINDOW_NAME, im)
     cv2.waitKey(100)
     time.sleep(.1)
@@ -113,6 +114,7 @@ def display_blocks(*blocks):
 
 def clear_blocks():
     # Clears screen
+    cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow(WINDOW_NAME, np.zeros((PROJECTOR_H, PROJECTOR_W)))
     cv2.waitKey(100)
     time.sleep(.1)
@@ -120,6 +122,7 @@ def clear_blocks():
 
 def floodlight_blocks():
     # Sets screen to white
+    cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow(WINDOW_NAME, np.ones((PROJECTOR_H, PROJECTOR_W)))
     cv2.waitKey(100)
     time.sleep(.1)
